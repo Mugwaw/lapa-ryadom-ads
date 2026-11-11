@@ -16,7 +16,9 @@ pnpm install
 pnpm build
 ```
 
-После сборки откройте `dist/index.html` и `dist/showcase.html` либо запустите статический HTTP-сервер в `dist`. Стили собираются из `src/input.css`; палитра, `darkMode: 'class'` и кастомная утилита `scrollbar-thin` находятся в `tailwind.config.js`.
+После сборки запустите статический HTTP-сервер в `dist`: рекламный блок на главной странице использует модуль Vue и требует HTTP. Стили собираются из `src/input.css`; палитра, `darkMode: 'class'` и кастомная утилита `scrollbar-thin` находятся в `tailwind.config.js`.
+
+Рекламный плейсхолдер находится в `src/AdSlot.vue`, монтируется через `src/ad-slot-main.js` и собирается Vite в `dist/ad-slot.js`. Для Cloudflare Pages: build command `npm run build`, output directory `dist`, base `/`. Отчёт о выборе хостинга и скриншот — в `reports/`.
 
 ## Проверка
 

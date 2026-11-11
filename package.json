@@ -3,11 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "node ./src/build-care.cjs && tailwindcss -i ./src/input.css -o ./dist/styles.css --minify",
+    "build": "node ./src/build-care.cjs && tailwindcss -i ./src/input.css -o ./dist/styles.css --minify && vite build",
     "dev": "tailwindcss -i ./src/input.css -o ./dist/styles.css --watch"
   },
   "devDependencies": {
+    "@tailwindcss/line-clamp": "^0.4.4",
+    "@vitejs/plugin-vue": "^6.0.10",
     "tailwindcss": "^3.4.17",
-    "@tailwindcss/line-clamp": "^0.4.4"
+    "vite": "^8.3.7"
+  },
+  "dependencies": {
+    "vue": "^3.5.45"
   }
 }
