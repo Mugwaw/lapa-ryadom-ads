@@ -13,13 +13,13 @@ const server = http.createServer((req, res) => {
 })
 
 ;(async () => {
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
+  if (!process.env.SITE_URL) await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
   const browser = await chromium.launch({ headless: true, executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe' })
   try {
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 })
     const errors = []
     page.on('pageerror', error => errors.push(error.message))
-    await page.goto(`http://127.0.0.1:${server.address().port}/`, { waitUntil: 'networkidle' })
+    await page.goto(process.env.SITE_URL || `http://127.0.0.1:${server.address().port}/`, { waitUntil: 'networkidle' })
     const slot = page.getByText('Рекламное место')
     await slot.waitFor({ timeout: 5000 }).catch(error => {
       throw new Error(`${error.message}\nBrowser errors: ${errors.join('; ')}\nHTML title: ${page.url()}`)
@@ -30,6 +30,6 @@ const server = http.createServer((req, res) => {
     console.log('Ad slot rendered; no browser errors; screenshot: reports/ad-slot-desktop.png')
   } finally {
     await browser.close()
-    server.close()
+    if (server.listening) server.close()
   }
 })().catch(error => { console.error(error); process.exitCode = 1 })

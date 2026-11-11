@@ -20,6 +20,8 @@ pnpm build
 
 Рекламный плейсхолдер находится в `src/AdSlot.vue`, монтируется через `src/ad-slot-main.js` и собирается Vite в `dist/ad-slot.js`. Для Cloudflare Pages: build command `npm run build`, output directory `dist`, base `/`. Отчёт о выборе хостинга и скриншот — в `reports/`.
 
+Опубликованная учебная версия: https://mugwaw.github.io/lapa-ryadom-ads/ (GitHub Pages). Автоматическая сборка и публикация настроены в `.github/workflows/pages.yml`.
+
 ## Проверка
 
 `node qa.cjs` проверяет в Chrome ширины 320, 375, 768, 1440, 1920 и 3840 px, горизонтальное переполнение, количество заданий и несколько интерактивных состояний. Для запуска нужен Chrome по пути, указанному в `qa.cjs`.
