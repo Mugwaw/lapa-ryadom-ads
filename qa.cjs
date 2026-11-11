@@ -8,6 +8,7 @@ const { pathToFileURL } = require('node:url');
   const base = pathToFileURL(path.resolve('dist/index.html')).href;
   const lab = pathToFileURL(path.resolve('dist/showcase.html')).href;
   const dashboard = pathToFileURL(path.resolve('dist/dashboard.html')).href;
+  const care = pathToFileURL(path.resolve('dist/care.html')).href;
   for (const width of [320, 375, 768, 1440, 1920]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto(base, { waitUntil: 'domcontentloaded' });
@@ -57,6 +58,30 @@ const { pathToFileURL } = require('node:url');
     await page.locator('#dashboard-query').fill('Рокки');
     if (await page.locator('#dashboard-result').textContent() !== 'Показано: 1') throw new Error('Dashboard search failed');
     console.log(`dashboard ${width}px OK`);
+  }
+  for (const width of [320, 375, 1440, 1920]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(care, { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(850);
+    const state = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, viewport: innerWidth, labels: document.querySelectorAll('.demo-label').length, fixed: getComputedStyle(document.querySelector('[data-dashboard-sidebar]')).position, sections: document.querySelectorAll('main section').length }));
+    if (state.scroll > state.viewport + 1) {
+      const offenders = await page.evaluate(() => [...document.querySelectorAll('*')].filter(el => el.getBoundingClientRect().right > innerWidth + 1).slice(0, 12).map(el => ({ tag: el.tagName, id: el.id, className: typeof el.className === 'string' ? el.className.slice(0, 120) : '', right: Math.round(el.getBoundingClientRect().right) })));
+      throw new Error(`Care page overflow at ${width}: ${state.scroll}; ${JSON.stringify(offenders)}`);
+    }
+    if (state.labels || state.sections < 15 || state.fixed !== 'fixed') throw new Error(`Care page missing integrated content at ${width}: ${JSON.stringify(state)}`);
+    if (width === 320) {
+      await page.locator('[data-dashboard-toggle]').click();
+      if (await page.locator('[data-dashboard-toggle]').getAttribute('aria-expanded') !== 'true') throw new Error('Care sidebar failed');
+    }
+    if (width === 375) {
+      await page.locator('#care-search').fill('каталог');
+      await page.locator('#care-search').press('Enter');
+      if (!await page.locator('#care-search-status').textContent().then(s => s.includes('Найден раздел'))) throw new Error('Care search failed');
+      await page.locator('#analytics-search').fill('Рокки');
+      if (!await page.locator('[data-analytics-row]').first().isVisible()) throw new Error('Analytics search failed');
+    }
+    if (width === 375 || width === 1440) await page.screenshot({ path: `qa-care-${width}.png` });
+    console.log(`care ${width}px OK`);
   }
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });

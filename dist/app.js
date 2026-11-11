@@ -73,6 +73,30 @@
     $('#dashboard-query').addEventListener('input', updateRows);
     $('#dashboard-period').addEventListener('change', updateRows);
   }
+  const careSearch = $('#care-search');
+  careSearch?.addEventListener('keydown', event => {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    const query = careSearch.value.trim().toLocaleLowerCase('ru');
+    if (!query) return;
+    const target = $$('main h2, main h3').find(heading => heading.textContent.toLocaleLowerCase('ru').includes(query));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      target.setAttribute('tabindex', '-1');
+      target.focus({ preventScroll: true });
+      $('#care-search-status').textContent = `Найден раздел: ${target.textContent}`;
+    } else $('#care-search-status').textContent = 'Раздел не найден';
+  });
+  if ($('[data-analytics-row]')) {
+    const updateAnalytics = () => {
+      const query = $('#analytics-search').value.trim().toLocaleLowerCase('ru');
+      const period = $('#analytics-period').selectedIndex === 0 ? 'current' : 'previous';
+      $$('[data-analytics-row]').forEach(row => { row.hidden = row.dataset.period !== period || !row.textContent.toLocaleLowerCase('ru').includes(query); });
+    };
+    $('#analytics-search').addEventListener('input', updateAnalytics);
+    $('#analytics-period').addEventListener('change', updateAnalytics);
+    updateAnalytics();
+  }
 
   const register = $('#register-form');
   const password = $('#reg-password');
