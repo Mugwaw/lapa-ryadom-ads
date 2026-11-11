@@ -7,6 +7,7 @@ const { pathToFileURL } = require('node:url');
   const page = await browser.newPage();
   const base = pathToFileURL(path.resolve('dist/index.html')).href;
   const lab = pathToFileURL(path.resolve('dist/showcase.html')).href;
+  const dashboard = pathToFileURL(path.resolve('dist/dashboard.html')).href;
   for (const width of [320, 375, 768, 1440, 1920]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto(base, { waitUntil: 'domcontentloaded' });
@@ -23,6 +24,8 @@ const { pathToFileURL } = require('node:url');
   let state = await page.evaluate(() => ({ width: document.documentElement.scrollWidth, viewport: innerWidth, tasks: document.querySelectorAll('section[id^="task-"]').length }));
   if (state.width > state.viewport + 1) throw new Error(`Showcase horizontal overflow: ${state.width}`);
   if (state.tasks !== 15) throw new Error(`Expected 15 tasks, got ${state.tasks}`);
+  await page.locator('label[for="lab-menu"]').click();
+  if (!await page.locator('#lab-menu').isChecked()) throw new Error('CSS burger failed');
   await page.locator('[data-add-cart]').first().click();
   if (await page.locator('[data-cart-count]').textContent() !== '1') throw new Error('Cart failed');
   await page.locator('[data-theme-toggle]').first().click();
@@ -42,5 +45,18 @@ const { pathToFileURL } = require('node:url');
   if (await page.locator('#demo-modal').isVisible()) throw new Error('Modal close failed');
   await page.screenshot({ path: 'qa-showcase-320.png' });
   console.log('showcase 320px, 15 tasks, interactions OK');
+  for (const width of [320, 1920, 3840]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto(dashboard, { waitUntil: 'domcontentloaded' });
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
+    if (overflow) throw new Error(`Dashboard overflow at ${width}`);
+    if (width === 320) {
+      await page.locator('[data-dashboard-toggle]').click();
+      if (await page.locator('[data-dashboard-toggle]').getAttribute('aria-expanded') !== 'true') throw new Error('Dashboard mobile sidebar failed');
+    }
+    await page.locator('#dashboard-query').fill('Рокки');
+    if (await page.locator('#dashboard-result').textContent() !== 'Показано: 1') throw new Error('Dashboard search failed');
+    console.log(`dashboard ${width}px OK`);
+  }
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });

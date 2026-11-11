@@ -57,6 +57,22 @@
     const open = sidebar.classList.toggle('-translate-x-full') === false;
     dashboardToggle.setAttribute('aria-expanded', String(open));
   });
+  if ($('#dashboard-query')) {
+    const updateRows = () => {
+      const query = $('#dashboard-query').value.trim().toLocaleLowerCase('ru');
+      const period = $('#dashboard-period').value;
+      let count = 0;
+      $$('[data-dashboard-row]').forEach(row => {
+        const match = row.textContent.toLocaleLowerCase('ru').includes(query) && (period === 'all' || row.dataset.period === period || (period === 'week' && row.dataset.period === 'today'));
+        row.hidden = !match;
+        if (match) count++;
+      });
+      $('#dashboard-result').textContent = `Показано: ${count}`;
+      $('#dashboard-empty').classList.toggle('hidden', count > 0);
+    };
+    $('#dashboard-query').addEventListener('input', updateRows);
+    $('#dashboard-period').addEventListener('change', updateRows);
+  }
 
   const register = $('#register-form');
   const password = $('#reg-password');
