@@ -126,6 +126,7 @@ const responsiveHtml = html
   .replace('<a href="#top">Home</a><a href="#about">About</a><a href="#services">Services</a><a href="#contact">Contact</a></div></nav>', '<a href="#top">Home</a><a href="#about">About</a><a href="#services">Services</a><a href="#contact">Contact</a><a href="#register">Sign In</a></div></nav>')
   .replaceAll('href="#workspace">Кабинет', 'href="./cabinet.html">Кабинет')
   .replaceAll('href="#register">Sign In', 'href="./cabinet.html">Кабинет')
+  .replace('href="#services">Забота</a>', 'href="#services">Забота</a><a class="block rounded-xl px-4 py-3 hover:bg-white/15" href="./rooms.html">Номера</a>')
   .replace('Следите за делами, общайтесь и готовьте пространство для питомцев.</p></div>', 'Следите за делами, общайтесь и готовьте пространство для питомцев.</p><a class="btn-primary mt-6" href="./cabinet.html">Открыть кабинет питомцев →</a></div>');
 fs.writeFileSync(path.join(root, 'dist/care.html'), responsiveHtml);
 console.log('Created dist/care.html');

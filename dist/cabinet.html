@@ -22,6 +22,7 @@
     </a>
     <div class="top-actions">
       <a class="site-link" href="./index.html">О проекте</a>
+      <a class="site-link" href="./rooms.html">Номера</a>
       <a class="site-link" href="./care.html">Пространство заботы</a>
       <button v-if="user" class="btn btn-sm btn-outline-success ml-3" @click="logout">
         {{ user }} · Сменить имя
@@ -47,6 +48,7 @@
         <span>{{ item.icon }}</span>{{ item.label }}
       </button>
       <a class="nav-item side-home" href="./index.html"><span>↗</span>На сайт</a>
+      <a class="nav-item side-home" href="./rooms.html"><span>⌂</span>Номера</a>
       <div class="side-note">Учебный кабинет · данные хранятся только в этом браузере</div>
     </aside>
 
