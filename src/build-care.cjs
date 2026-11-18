@@ -50,58 +50,10 @@ const fromGallery = (task, id, options = {}) => {
       return open + body.replace(/<tr(?= class=|>)/g, () => `<tr data-analytics-row data-period="${rowNumber++ < 2 ? 'current' : 'previous'}"`) + close;
     });
   }
-  if (task === '4-4') {
-    const wording = [
-      ['Компоненты «Лапа рядом»', 'Настройки пространства'],
-      ['Цвета бренда и семантика', 'Цветовые статусы'],
-      ['>brand</span>', '>Фирменный</span>'],
-      ['>success</span>', '>Готово</span>'],
-      ['>warning</span>', '>Внимание</span>'],
-      ['>danger</span>', '>Ошибка</span>'],
-      ['>info</span>', '>Информация</span>'],
-      ['Типографика', 'Тексты интерфейса'],
-      ['Заголовок H1', 'Лапа рядом'],
-      ['Заголовок H2', 'Ваше пространство'],
-      ['Основной текст: понятный, спокойный, с комфортной длиной строки.', 'Тёплые слова и ясные инструкции помогают заботиться без лишних вопросов.'],
-      ['Кнопки · варианты и размеры', 'Действия'],
-      ['Primary sm', 'Сохранить'],
-      ['Primary md', 'Продолжить'],
-      ['Primary lg', 'Записаться'],
-      ['>Secondary</button>', '>Подробнее</button>'],
-      ['>Ghost</button>', '>Отмена</button>'],
-      ['>Danger</button>', '>Удалить</button>'],
-      ['>Disabled</button>', '>Недоступно</button>'],
-      ['Поля и переключатели', 'Настройки уведомлений'],
-      ['>Поле<input', '>Имя питомца<input'],
-      ['placeholder="Введите значение"', 'placeholder="Например, Рокки"'],
-      ['> Чекбокс</label>', '> Получать обновления</label>'],
-      ['> Toggle</label>', '> Напоминания</label>'],
-      ['Badge, Alert, Card', 'Уведомления и карточки'],
-      ['>Новый</span>', '>Новый питомец</span>'],
-      ['Информационное сообщение.', 'Данные питомца можно обновить в любое время.'],
-      ['>Карточка</h5>', '>Питомец</h5>'],
-      ['Универсальный компонент поверхности.', 'Важные сведения о вашем друге.'],
-      ['>Modal</h4>', '>Подтверждение</h4>'],
-      ['Открыть окно', 'Показать сообщение']
-    ];
-    for (const [before, after] of wording) section = section.replace(before, after);
-  }
   return section.replaceAll('>Email</label>', '>Эл. почта</label>')
     .replaceAll('>Email<input', '>Эл. почта<input')
     .replaceAll('Введите корректный email.', 'Введите корректный адрес почты.');
 };
-const buttonMatrix = balanced(gallery, '<section class="pb-16" aria-labelledby="button-matrix-title"', 'section')
-  .replace('4.4 · Размеры каждого варианта кнопки', 'Размеры элементов управления')
-  .replace('>Primary</span>', '>Основные</span>')
-  .replace('>Secondary</span>', '>Дополнит.</span>')
-  .replace('>Ghost</span>', '>Текстовые</span>')
-  .replace('>Danger</span>', '>Удаление</span>')
-  .replaceAll('>sm</button>', '>Малая</button>')
-  .replaceAll('>md</button>', '>Средняя</button>')
-  .replaceAll('>lg</button>', '>Большая</button>');
-const modal = balanced(gallery, '<div id="demo-modal"', 'div')
-  .replace('Пример модального окна', 'Сообщение от клуба')
-  .replace('Окно закрывается кнопкой, клавишей Escape или нажатием на фон.', 'Спасибо, что заботитесь о своём питомце. Вы всегда можете вернуться к его данным.');
 const footer = balanced(landing, '<footer class=', 'footer')
   .replace('Уход, каталог и запись</a>', 'Главная страница</a>')
   .replace('Посмотреть уход и каталог →', 'Вернуться на главную →')
@@ -133,9 +85,7 @@ ${fromGallery('4-3', 'catalog')}
 ${fromGallery('4-2', 'application')}
 ${fromLanding('faq')}
 ${fromLanding('contact')}
-${fromGallery('4-4', 'settings', { tint: true })}
-${buttonMatrix}
-</main>${footer}</div></div>${modal}</body></html>`;
+</main>${footer}</div></div></body></html>`;
 const responsiveHtml = html
   .replace('class="btn-primary btn-sm" href="#register">Sign In</a>', 'class="btn-primary btn-sm hidden sm:inline-flex" href="#register">Sign In</a>')
   .replace('<a href="#top">Home</a><a href="#about">About</a><a href="#services">Services</a><a href="#contact">Contact</a></div></nav>', '<a href="#top">Home</a><a href="#about">About</a><a href="#services">Services</a><a href="#contact">Contact</a><a href="#register">Sign In</a></div></nav>')
