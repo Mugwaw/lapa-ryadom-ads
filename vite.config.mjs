@@ -8,6 +8,11 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: false,
-    lib: { entry: 'src/ad-slot-main.js', formats: ['es'], fileName: () => 'ad-slot.js' },
+    rollupOptions: { output: { chunkFileNames: 'shared-[name].js' } },
+    lib: {
+      entry: { 'ad-slot': 'src/ad-slot-main.js', cabinet: 'src/cabinet-main.js' },
+      formats: ['es'],
+      fileName: (_format, entryName) => `${entryName}.js`,
+    },
   },
 })

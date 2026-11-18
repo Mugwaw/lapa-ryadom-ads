@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fffaf1">
+  <meta name="description" content="Лапа рядом — учебный кабинет для записей о питомцах и журнала действий.">
+  <title>Кабинет питомцев — Лапа рядом</title>
+  
+  <!-- Стили Bootstrap 4 и кастомные стили -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./cabinet.css">
+  <link rel="stylesheet" href="./cabinet-theme.css">
+</head>
+<body>
+
+<div id="app">
+  <!-- Верхняя панель (Шапка) -->
+  <header class="topbar">
+    <a class="brand" href="./index.html">
+      <span class="brand-mark">✿</span> Лапа рядом
+    </a>
+    <div class="top-actions">
+      <a class="site-link" href="./index.html">О проекте</a>
+      <a class="site-link" href="./care.html">Пространство заботы</a>
+      <button v-if="user" class="btn btn-sm btn-outline-success ml-3" @click="logout">
+        {{ user }} · Сменить имя
+      </button>
+      <button v-else class="btn btn-sm btn-outline-success ml-3" @click="page = 'login'">
+        Указать имя
+      </button>
+    </div>
+  </header>
+
+  <!-- Основной макет -->
+  <div class="layout">
+    
+    <!-- Боковая навигация -->
+    <aside class="sidebar">
+      <div class="side-label">РАБОЧЕЕ ПРОСТРАНСТВО</div>
+      <button 
+        v-for="item in nav" 
+        :key="item.id" 
+        class="nav-item" 
+        :class="{ active: page === item.id }" 
+        @click="go(item.id)">
+        <span>{{ item.icon }}</span>{{ item.label }}
+      </button>
+      <a class="nav-item side-home" href="./index.html"><span>↗</span>На сайт</a>
+      <div class="side-note">Учебный кабинет · данные хранятся только в этом браузере</div>
+    </aside>
+
+    <!-- Область контента -->
+    <main class="content">
+
+      <!-- СЕКЦИЯ 1: Главная страница -->
+      <section v-if="page === 'home'">
+        <div class="page-head">
+          <div>
+            <div class="eyebrow">ЛАПА РЯДОМ · КАБИНЕТ</div>
+            <h1>{{ user ? 'Здравствуйте, ' + user : 'Всё о питомцах — рядом' }}</h1>
+            <p>Храните записи, импортируйте Excel и просматривайте историю изменений.</p>
+          </div>
+          <button class="btn btn-orange" @click="go('upload')">＋ Загрузить Excel</button>
+        </div>
+
+        <div class="cabinet-banner">
+          <div><span class="banner-kicker">ОДНО ПРОСТРАНСТВО ДЛЯ ЗАБОТЫ</span><h2>У каждого хвоста своя история</h2><p>Добавьте питомца вручную или загрузите таблицу. Этот учебный кабинет сохранит данные в вашем браузере.</p><button class="btn btn-banner" @click="go('data')">Открыть записи →</button></div>
+          <img src="./assets/cabinet-room.png" alt="Собака отдыхает в уютном номере">
+        </div>
+
+        <!-- Карточки статистики -->
+        <div class="stats">
+          <div class="stat">
+            <span>Всего записей</span>
+            <b>{{ rows.length }}</b>
+            <small>в таблице питомцев</small>
+          </div>
+          <div class="stat">
+            <span>Загружено файлов</span>
+            <b>{{ files.length }}</b>
+            <small>локально в браузере</small>
+          </div>
+          <div class="stat">
+            <span>События журнала</span>
+            <b>{{ logs.length }}</b>
+            <small>история изменений</small>
+          </div>
+        </div>
+
+        <!-- Таблица последних записей -->
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Последние записи</h2>
+              <p>Недавно добавленные питомцы</p>
+            </div>
+            <button class="btn btn-sm btn-light-green" @click="go('data')">Все данные →</button>
+          </div>
+          
+          <div v-if="rows.length" class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th v-for="h in headers" :key="h">{{ h }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="row in rows.slice(0, 5)" :key="row._id">
+                  <td v-for="h in headers" :key="h">{{ row[h] }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div v-else class="empty">
+            Здесь появятся данные из Excel-файла.<br>
+            <button class="btn btn-link" @click="go('upload')">Загрузить первый файл</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- СЕКЦИЯ 2: Загрузка Excel (Drag & Drop) -->
+      <section v-if="page === 'upload'">
+        <div class="eyebrow">ИМПОРТ ДАННЫХ</div>
+        <h1>Загрузка Excel</h1>
+        <p class="intro">Перетащите файл в область загрузки или выберите его на компьютере. Строки будут добавлены в таблицу питомцев.</p>
+        
+        <div 
+          class="upload-zone" 
+          :class="{ dragging: dragging }" 
+          @dragover.prevent="dragging = true" 
+          @dragleave.prevent="dragging = false" 
+          @drop.prevent="dropFile">
+          
+          <div class="upload-icon">↑</div>
+          <h3>Перетащите файл сюда</h3>
+          <p>Поддерживаются Excel-файлы .xlsx и .xls</p>
+          
+          <label class="btn btn-green">
+            Выбрать файл
+            <input 
+              type="file" 
+              accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" 
+              hidden 
+              @change="chooseFile">
+          </label>
+          <small>Строки и сведения о файле сохранятся только в этом браузере</small>
+        </div>
+
+        <!-- Список импортированных файлов -->
+        <div class="panel mt-4" v-if="files.length">
+          <div class="panel-head">
+            <div>
+              <h2>Локальные файлы</h2>
+              <p>Файлы, импортированные в этом браузере</p>
+            </div>
+          </div>
+          <div class="file-row" v-for="(f, i) in files" :key="f.name + i">
+            <span>📄</span>
+            <div class="file-name">
+              <b>{{ f.name }}</b>
+              <small>{{ f.date }} · {{ f.count }} строк</small>
+            </div>
+            <button class="btn btn-sm btn-outline-danger" @click="removeFile(i)">Удалить</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- СЕКЦИЯ 3: Таблица данных -->
+      <section v-if="page === 'data'">
+        <div class="page-head">
+          <div>
+            <div class="eyebrow">БАЗА ПИТОМЦЕВ</div>
+            <h1>Данные</h1>
+            <p>Добавляйте, обновляйте и удаляйте записи.</p>
+          </div>
+          <button class="btn btn-orange" @click="openEditor()">＋ Добавить запись</button>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Питомцы <span class="count">{{ rows.length }}</span></h2>
+              <p>Постраничная навигация и загрузка по запросу</p>
+            </div>
+            
+            <!-- Фильтры и размер страницы -->
+            <div class="form-inline">
+              <input v-model="filterText" class="form-control form-control-sm" placeholder="Поиск по таблице">
+              <select class="form-control form-control-sm ml-2" v-model.number="pageSize">
+                <option :value="10">10 строк</option>
+                <option :value="25">25 строк</option>
+                <option :value="50">50 строк</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Таблица -->
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th v-for="h in headers" :key="h">{{ h }}</th>
+                  <th class="text-right">Действия</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="row in visibleRows" :key="row._id">
+                  <td v-for="h in headers" :key="h">{{ row[h] }}</td>
+                  <td class="text-right actions">
+                    <button class="btn btn-sm btn-link" @click="openEditor(row)">Изменить</button>
+                    <button class="btn btn-sm btn-link text-danger" @click="deleteRow(row)">Удалить</button>
+                  </td>
+                </tr>
+                <tr v-if="!visibleRows.length">
+                  <td :colspan="headers.length + 1" class="empty">Нет записей. Импортируйте Excel или добавьте запись.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Пагинация -->
+          <div class="table-footer">
+            <span>Показано {{ visibleRows.length }} из {{ filteredRows.length }}</span>
+            <div>
+              <button class="btn btn-sm btn-light-green mr-2" :disabled="pageNo === 1" @click="pageNo--">← Назад</button>
+              <span class="muted">{{ pageNo }} / {{ totalPages }}</span>
+              <button class="btn btn-sm btn-light-green ml-2" :disabled="pageNo >= totalPages" @click="pageNo++">Вперёд →</button>
+              <button v-if="visibleRows.length < filteredRows.length" class="btn btn-sm btn-outline-success ml-2" @click="loadMore">
+                Загрузить ещё
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- СЕКЦИЯ 4: Журнал действий -->
+      <section v-if="page === 'logs'">
+        <div class="eyebrow">АУДИТ</div>
+        <h1>Журнал действий</h1>
+        <p class="intro">История создания, обновления и удаления записей. Выберите событие, чтобы сравнить состояние объекта.</p>
+
+        <div class="panel">
+          <div v-if="!logs.length" class="empty">Событий пока нет. История появится после изменения записей.</div>
+          
+          <div v-for="log in logs" :key="log.id" class="log-row">
+            <div class="log-dot" :class="log.type"></div>
+            <div class="log-main">
+              <b>{{ log.title }}</b>
+              <small>{{ log.date }} · {{ log.user }}</small>
+              <button class="btn btn-sm btn-link p-0" @click="selectedLog = selectedLog === log.id ? null : log.id">
+                {{ selectedLog === log.id ? 'Скрыть сравнение' : 'Сравнить до и после' }}
+              </button>
+              
+              <!-- Сравнение объектов JSON -->
+              <div v-if="selectedLog === log.id" class="compare">
+                <div>
+                  <h6>До изменения</h6>
+                  <pre>{{ pretty(log.before) }}</pre>
+                </div>
+                <div>
+                  <h6>После изменения</h6>
+                  <pre>{{ pretty(log.after) }}</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Имя для учебного журнала -->
+      <section v-if="page === 'login'" class="auth-wrap">
+        <div class="auth-card">
+          <div class="brand-mark">✿</div>
+          <h2>Как к вам обращаться?</h2>
+          <p>Имя будет отображаться в учебном журнале действий. Аккаунт и пароль не нужны.</p>
+          <label for="cabinet-name">Ваше имя</label>
+          <input id="cabinet-name" class="form-control mb-3" v-model="authName" placeholder="Например, Анна" @keyup.enter="authenticate">
+          <div class="alert alert-info py-2" v-if="authMessage">{{ authMessage }}</div>
+          <button class="btn btn-green btn-block" @click="authenticate">Продолжить</button>
+          <button class="btn btn-link btn-block" @click="go('home')">Вернуться в кабинет</button>
+        </div>
+      </section>
+
+      <!-- МОДАЛЬНОЕ ОКНО: Редактирование / Добавление -->
+      <div class="modal-backdrop-custom" v-if="editorOpen" @click.self="editorOpen = false">
+        <div class="edit-modal">
+          <div class="modal-title">
+            <div>
+              <h2>{{ editing ? 'Редактировать запись' : 'Новая запись' }}</h2>
+              <p>Заполните поля питомца</p>
+            </div>
+            <button class="close" @click="editorOpen = false">×</button>
+          </div>
+          
+          <div v-for="h in headers" :key="h" class="form-group">
+            <label>{{ h }}</label>
+            <input class="form-control" v-model="form[h]" :placeholder="h">
+          </div>
+          
+          <div class="modal-actions">
+            <button class="btn btn-light" @click="editorOpen = false">Отмена</button>
+            <button class="btn btn-green" @click="saveRow">Сохранить</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- МОДАЛЬНОЕ ОКНО: Ошибка -->
+      <div class="modal-backdrop-custom" v-if="errorMessage" @click.self="errorMessage = ''">
+        <div class="edit-modal error-modal">
+          <button class="close" @click="errorMessage = ''">×</button>
+          <div class="error-icon">!</div>
+          <h2>Не удалось загрузить файл</h2>
+          <p>{{ errorMessage }}</p>
+          <p class="muted">Выберите файл формата .xlsx или .xls.</p>
+          <button class="btn btn-green btn-block" @click="errorMessage = ''">Понятно</button>
+        </div>
+      </div>
+
+      <footer>© 2026 Лапа рядом · учебный проект <span>Данные хранятся в вашем браузере</span></footer>
+    </main>
+  </div>
+</div>
+
+<script type="module" src="./cabinet.js"></script>
+
+</body>
+</html>

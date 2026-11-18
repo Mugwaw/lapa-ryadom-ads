@@ -8,7 +8,7 @@ const server = http.createServer((req, res) => {
   const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname)
   const file = path.resolve(root, `.${pathname === '/' ? '/index.html' : pathname}`)
   if (!file.startsWith(root + path.sep)) return res.writeHead(403).end()
-  const type = file.endsWith('.js') ? 'text/javascript' : file.endsWith('.css') ? 'text/css' : file.endsWith('.html') ? 'text/html' : 'application/octet-stream'
+  const type = /\.(js|mjs)$/.test(file) ? 'text/javascript' : file.endsWith('.css') ? 'text/css' : file.endsWith('.html') ? 'text/html' : 'application/octet-stream'
   fs.createReadStream(file).on('error', () => res.writeHead(404).end()).once('open', () => res.writeHead(200, { 'Content-Type': type })).pipe(res)
 })
 
