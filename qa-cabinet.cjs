@@ -15,14 +15,14 @@ const server = http.createServer((req, res) => {
 })
 
 ;(async () => {
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
-  const origin = `http://127.0.0.1:${server.address().port}`
+  if (!process.env.SITE_URL) await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
+  const origin = process.env.SITE_URL || `http://127.0.0.1:${server.address().port}`
   const browser = await chromium.launch({ headless: true, executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe' })
   try {
     const page = await browser.newPage({ viewport: { width: 1440, height: 900 } })
     const errors = []
     page.on('pageerror', error => errors.push(error.message))
-    page.on('console', message => { if (message.type() === 'error') errors.push(message.text()) })
+    page.on('response', response => { if (response.status() >= 400 && !response.url().endsWith('/favicon.ico')) errors.push(`${response.status()} ${response.url()}`) })
     await page.goto(origin, { waitUntil: 'networkidle' })
     await page.locator('header nav a[href="./cabinet.html"]').first().click()
     await page.waitForURL('**/cabinet.html')
@@ -58,6 +58,6 @@ const server = http.createServer((req, res) => {
     console.log('Cabinet navigation, CRUD, persistence, Excel import, journal and mobile layout passed')
   } finally {
     await browser.close()
-    server.close()
+    if (server.listening) server.close()
   }
 })().catch(error => { console.error(error); process.exitCode = 1 })
