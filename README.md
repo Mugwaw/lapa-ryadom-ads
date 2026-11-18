@@ -12,6 +12,8 @@
 - `dist/auth.html` — демонстрационные формы входа и регистрации, связанные с кабинетом. Имя и почта хранятся в браузере; пароль не сохраняется и не проверяется.
 - `dist/rooms.html` — адаптивная страница номеров и повседневного ухода по отдельному HTML-макету из папки `pr` на рабочем столе.
 
+Фотографии каталога взяты из Wikimedia Commons: [мяч](https://commons.wikimedia.org/wiki/File:Maltipoo_dog_running_to_return_a_tennis_ball_(12012).jpg), [миска](https://commons.wikimedia.org/wiki/File:Blue_Slow_Feeder_Dog_Bowl_with_Raised_Studs_and_Ridges.jpg), [плед](https://commons.wikimedia.org/wiki/File:Blanket_Fiber.jpg), [поводок](https://commons.wikimedia.org/wiki/File:PPD-Leash-PinkGreenStripes.jpg), [корм](https://commons.wikimedia.org/wiki/File:Dog_food_in_a_bowl.jpg), [игрушка](https://commons.wikimedia.org/wiki/File:Tabby_Cat_with_Toy_Mouse.jpg), [лежанка](https://commons.wikimedia.org/wiki/File:Black_cat_lying_on_a_blue_bed_quilt.jpg), [переноска](https://commons.wikimedia.org/wiki/File:Ruffit_Dog_Carrier.jpg). Фотографии иллюстративные; товары и цены в каталоге демонстрационные.
+
 ## Запуск
 
 ```sh

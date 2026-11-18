@@ -27,7 +27,7 @@ const fromGallery = (task, id, options = {}) => {
     .replace(/<span class="demo-label">[^<]*<\/span>/, '')
     .replace('class="lab-section"', `class="section-pad${options.tint ? ' bg-brand-50 dark:bg-slate-800/50' : ''}"`)
     .replace(/<p class="text-xs text-slate-500">Компоненты описаны в[\s\S]*?<\/p>/, '<p class="text-xs text-slate-500">Единые цвета, типографика и компоненты помогают сохранять узнаваемый стиль клуба.</p>');
-  if (task === '1-3') section = section.replace('Шесть демонстрационных товаров. Кнопка обновляет счётчик корзины.', 'Выберите знакомые вещи для отдыха и игр. Кнопка обновляет счётчик корзины.');
+  if (task === '1-3') section = section.replace('Восемь товаров для отдыха и игр. Кнопка обновляет счётчик корзины.', 'Выберите знакомые вещи для отдыха и игр. Кнопка обновляет счётчик корзины.');
   if (task === '1-1') section = section.replace('>Follow</button>', '>Подписаться</button>').replace('>Message</a>', '>Написать</a>');
   if (task === '3-2') section = section.replace('>To Do ', '>К выполнению ').replace('>In Progress ', '>В работе ').replace('>Done ', '>Готово ');
   if (task === '4-3') section = section
