@@ -23,13 +23,11 @@
     <div class="top-actions">
       <a class="site-link" href="./index.html">О проекте</a>
       <a class="site-link" href="./rooms.html">Номера</a>
-      <a class="site-link" href="./care.html">Пространство заботы</a>
+      <a class="site-link" href="./care.html">Уход и запись</a>
       <button v-if="user" class="btn btn-sm btn-outline-success ml-3" @click="logout">
-        {{ user }} · Сменить имя
+        {{ user }} · Выйти
       </button>
-      <button v-else class="btn btn-sm btn-outline-success ml-3" @click="page = 'login'">
-        Указать имя
-      </button>
+      <a v-else class="btn btn-sm btn-outline-success ml-3" href="./auth.html#login">Войти</a>
     </div>
   </header>
 

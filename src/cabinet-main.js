@@ -2,6 +2,7 @@ import { createApp } from 'vue/dist/vue.esm-bundler.js';
 import * as XLSX from 'xlsx';
 
 const STORE_KEY = 'lapa-ryadom-cabinet-v1';
+const SESSION_KEY = 'lapa-demo-session-v1';
 
 createApp({
 
@@ -74,7 +75,8 @@ createApp({
         this.rows = saved.rows || [];
         this.files = saved.files || [];
         this.logs = saved.logs || [];
-        this.user = saved.user || '';
+        const demoSession = JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null');
+        this.user = demoSession?.name || saved.user || '';
       } catch (e) {
         console.error('Ошибка загрузки локальных данных', e);
       }
@@ -102,8 +104,9 @@ createApp({
     },
     logout() {
       this.user = '';
+      sessionStorage.removeItem(SESSION_KEY);
       this.persist();
-      this.page = 'home';
+      window.location.href = './auth.html#login';
     },
 
     // Работа с Excel файлами

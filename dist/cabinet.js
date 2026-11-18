@@ -18631,7 +18631,7 @@ var Iy = {
 };
 Ti.version;
 // src/cabinet-main.js
-var Ly = "lapa-ryadom-cabinet-v1";
+var Ly = "lapa-ryadom-cabinet-v1", Ry = "lapa-demo-session-v1";
 v({
 	data() {
 		return {
@@ -18711,7 +18711,9 @@ v({
 		loadState() {
 			try {
 				let e = JSON.parse(localStorage.getItem(Ly) || "{}");
-				this.rows = e.rows || [], this.files = e.files || [], this.logs = e.logs || [], this.user = e.user || "";
+				this.rows = e.rows || [], this.files = e.files || [], this.logs = e.logs || [];
+				let t = JSON.parse(sessionStorage.getItem(Ry) || "null");
+				this.user = t?.name || e.user || "";
 			} catch (e) {
 				console.error("Ошибка загрузки локальных данных", e);
 			}
@@ -18731,7 +18733,7 @@ v({
 			this.authName.trim() ? (this.user = this.authName.trim(), this.persist(), this.page = "home", this.authMessage = "") : this.authMessage = "Введите имя для журнала действий";
 		},
 		logout() {
-			this.user = "", this.persist(), this.page = "home";
+			this.user = "", sessionStorage.removeItem(Ry), this.persist(), window.location.href = "./auth.html#login";
 		},
 		dropFile(e) {
 			this.dragging = !1;

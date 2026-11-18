@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fffaf1">
+  <meta name="description" content="Демонстрационный вход и регистрация в кабинет питомцев «Лапа рядом».">
+  <title>Вход и регистрация — Лапа рядом</title>
+  <script>try{if(localStorage.getItem('theme')==='dark'||(!localStorage.getItem('theme')&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark')}catch(e){}</script>
+  <link rel="stylesheet" href="./styles.css">
+  <script defer src="./auth.js"></script>
+</head>
+<body>
+  <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-white focus:p-3">Перейти к содержимому</a>
+  <header class="border-b border-brand-100 bg-cream dark:border-slate-700 dark:bg-slate-900">
+    <nav class="container-page flex min-h-20 flex-wrap items-center justify-between gap-4 py-3" aria-label="Основная навигация">
+      <a href="./index.html" class="flex items-center gap-2 font-display text-xl font-bold text-brand-800 dark:text-brand-100"><span class="grid size-10 place-items-center rounded-full bg-brand-700 text-xl text-white" aria-hidden="true">✿</span> Лапа рядом</a>
+      <div class="flex flex-wrap gap-4 text-sm font-semibold"><a class="hover:text-brand-600" href="./index.html">Главная</a><a class="hover:text-brand-600" href="./rooms.html">Номера</a><a class="hover:text-brand-600" href="./care.html#catalog">Уход и каталог</a></div>
+    </nav>
+  </header>
+  <main id="main" class="container-page grid min-h-[calc(100vh-81px)] items-center gap-10 py-12 lg:grid-cols-2 lg:py-20">
+    <div class="max-w-xl">
+      <p class="section-kicker">Кабинет питомцев</p>
+      <h1 class="font-display text-4xl leading-tight sm:text-5xl">Все записи о питомцах — рядом</h1>
+      <p class="mt-5 max-w-lg text-lg leading-relaxed text-slate-600 dark:text-slate-300">Войдите в демонстрационный кабинет, чтобы посмотреть записи, таблицу и журнал действий.</p>
+      <img class="mt-8 hidden h-56 w-full rounded-2xl object-cover lg:block lg:h-72" src="./assets/cabinet-room.png" alt="Питомец отдыхает в комнате" loading="lazy">
+    </div>
+    <section class="surface-card mx-auto w-full max-w-lg !p-6 sm:!p-8" aria-labelledby="auth-title">
+      <h2 id="auth-title" class="font-display text-3xl">Добро пожаловать</h2>
+      <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">Это учебная заглушка. Пароль не сохраняется и не проверяется, поэтому личные данные здесь лучше не использовать.</p>
+      <div class="mt-6 grid grid-cols-2 rounded-xl bg-brand-50 p-1 dark:bg-slate-700" role="tablist" aria-label="Способ входа">
+        <button id="tab-login" class="rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-brand-800 shadow-sm dark:bg-slate-800 dark:text-white" type="button" role="tab" aria-selected="true" aria-controls="panel-login">Вход</button>
+        <button id="tab-register" class="rounded-lg px-4 py-2.5 text-sm font-semibold text-brand-800 dark:text-white" type="button" role="tab" aria-selected="false" aria-controls="panel-register">Регистрация</button>
+      </div>
+      <div id="panel-login" class="mt-6" role="tabpanel" aria-labelledby="tab-login">
+        <form id="login-form" class="space-y-4">
+          <div><label class="mb-2 block text-sm font-semibold" for="login-email">Эл. почта</label><input class="field" id="login-email" name="email" type="email" autocomplete="email" required placeholder="name@example.com"></div>
+          <div><label class="mb-2 block text-sm font-semibold" for="login-password">Пароль</label><input class="field" id="login-password" name="password" type="password" autocomplete="current-password" required placeholder="Любой пароль для демо"></div>
+          <button class="btn-primary w-full" type="submit">Войти в кабинет</button>
+        </form>
+      </div>
+      <div id="panel-register" class="mt-6 hidden" role="tabpanel" aria-labelledby="tab-register">
+        <form id="register-auth-form" class="space-y-4">
+          <div><label class="mb-2 block text-sm font-semibold" for="register-name">Ваше имя</label><input class="field" id="register-name" name="name" autocomplete="name" required minlength="2" placeholder="Например, Анна"></div>
+          <div><label class="mb-2 block text-sm font-semibold" for="register-email">Эл. почта</label><input class="field" id="register-email" name="email" type="email" autocomplete="email" required placeholder="name@example.com"></div>
+          <div><label class="mb-2 block text-sm font-semibold" for="register-password">Пароль</label><input class="field" id="register-password" name="password" type="password" autocomplete="new-password" required minlength="6" placeholder="Не менее 6 символов"></div>
+          <div><label class="mb-2 block text-sm font-semibold" for="register-confirm">Повторите пароль</label><input class="field" id="register-confirm" name="confirm" type="password" autocomplete="new-password" required minlength="6"></div>
+          <button class="btn-primary w-full" type="submit">Зарегистрироваться</button>
+        </form>
+      </div>
+      <p id="auth-status" class="mt-4 text-sm" role="status" aria-live="polite"></p>
+      <p class="mt-5 border-t border-brand-100 pt-4 text-xs leading-relaxed text-slate-500 dark:border-slate-700 dark:text-slate-400">Аккаунт на сервере не создаётся. Имя и почта сохраняются только в этом браузере для показа интерфейса.</p>
+    </section>
+  </main>
+</body>
+</html>

@@ -41,7 +41,7 @@
   follow?.addEventListener('click', () => {
     const pressed = follow.getAttribute('aria-pressed') === 'true';
     follow.setAttribute('aria-pressed', String(!pressed));
-    follow.textContent = pressed ? 'Follow' : 'Following ✓';
+    follow.textContent = pressed ? 'Подписаться' : 'Вы подписаны ✓';
   });
   let cartCount = 0;
   $$('[data-add-cart]').forEach(button => button.addEventListener('click', () => {
